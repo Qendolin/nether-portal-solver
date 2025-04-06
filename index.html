@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Portal Network Optimizer</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<h1>Portal Network Optimizer</h1>
+
+		<div class="container">
+			<div class="input-section">
+				<h2>Input</h2>
+				<p>Define portals, constraints, links, and optimization goals.</p>
+				<textarea id="problemInput" rows="25" cols="80">
+# The player hitbox width (0.6) plus portal thickness (0.25)
+ENTITY_SIZE 0.85
+
+# --- Portals ---
+# Format: PORTAL &lt;name&gt; &lt;dimension: O/N&gt; &lt;facing: X/Z&gt;
+PORTAL OverworldHub O X
+PORTAL NetherHub N X
+PORTAL OverworldRoof O X
+PORTAL NetherRoof N X
+
+# --- Position Constraints ---
+# Format: POS &lt;portal_name&gt; &lt;type: INC/EXC&gt; &lt;minX&gt; &lt;minY&gt; &lt;minZ&gt; &lt;maxX&gt; &lt;maxY&gt; &lt;maxZ&gt;
+POS OverworldHub INC -128 -60 0  128 128 0
+POS NetherHub INC -128 30 0  128 60 0
+POS OverworldRoof INC -128 -60 0  128 128 0
+POS NetherRoof INC -128 128 0  128 128 0
+
+# --- Desired Links ---
+# Format: LINK &lt;source_portal&gt; &lt;destination_portal&gt;
+LINK OverworldHub NetherHub
+LINK NetherHub OverworldHub
+LINK OverworldRoof NetherRoof
+LINK NetherRoof OverworldRoof
+
+# --- Optimization Goals ---
+# Format: OPTIMIZE &lt;portal1&gt; &lt;portal2&gt; [weight]
+OPTIMIZE OverworldHub OverworldRoof 1.0
+OPTIMIZE OverworldHub NetherHub 1.0
+OPTIMIZE OverworldRoof NetherRoof 1.0
+
+# Format: OPTIMIZE_POS &lt;portal&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt; [weight] (Target coords assumed Overworld)
+OPTIMIZE_POS OverworldHub 0 60 0 1.0
+OPTIMIZE_POS OverworldRoof 0 60 0 1.0
+            </textarea
+				>
+				<button id="solveButton">Solve</button>
+				<div id="solverStatus">Status: Idle</div>
+			</div>
+
+			<div class="output-section">
+				<h2>Output</h2>
+				<pre id="solutionOutput">Results will appear here...</pre>
+
+				<!-- Collapsible Link Distances -->
+				<details id="linkDistancesDetails">
+					<summary><h2>Inter-Dimensional Link Distances (Click to expand)</h2></summary>
+					<pre id="linkDistancesOutput">Link distance info will appear here...</pre>
+				</details>
+
+				<!-- Generated Commands Section -->
+				<div class="commands-section">
+					<h2>Generated Commands</h2>
+					<p>Commands to create portals at the solved locations.</p>
+					<pre id="commandsOutput">Commands will appear here...</pre>
+					<button id="copyCommandsButton" class="copy-button" disabled>Copy Commands</button>
+					<span id="copyStatus" class="copy-status"></span>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/utils.js"></script>
+		<script src="js/parser.js"></script>
+		<script src="js/solver.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>
